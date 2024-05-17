@@ -1,2 +1,2 @@
-# gitness-k3d-lab
-Gitness k3d lab
+# gitness-lab
+Gitness lab
