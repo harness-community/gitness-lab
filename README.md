@@ -101,10 +101,9 @@ kubectl get secret gitness-sa-token -n gitness -o=jsonpath='{.data.token}' | bas
 
 Save this token. You’ll use this later.
 
-### Collapsible Section
-
 <details>
   <summary>(Optional) Create a Slack Webhook</summary>
+
 This step is optional and is used to demonstrate how to send notifications from your Gitness pipeline. If you don’t have a Slack workspace set up already, you can skip this step.
 
 <ol>
