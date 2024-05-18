@@ -12,12 +12,13 @@ version: 1.2
 - [k3d](https://k3d.io/) installed (tested with 5.6.3)
 - [kubectl](https://kubernetes.io/docs/reference/kubectl/) installed (tested with 1.28.2)
 
-Optional:
-
-- [A free account on Harness](https://app.harness.io/auth/#/signup/&?utm_source=website&utm_campaign=devrel&utm_content=gitness-devdays)
-- An image registry with push access, e.g. Docker Hub.
-- An external Kubernetes cluster like GKE, EKS, or DigitalOcean Kubernetes
-- A slack workspace with admin access to create a webhook for notifications.
+<details>
+  <summary>Optional</summary>
+  - [A free account on Harness](https://app.harness.io/auth/#/signup/&?utm_source=website&utm_campaign=devrel&utm_content=gitness-devdays)
+  - An image registry with push access, e.g. Docker Hub.
+  - An external Kubernetes cluster like GKE, EKS, or DigitalOcean Kubernetes
+  - A slack workspace with admin access to create a webhook for notifications.
+</details>
 
 ## Get Started
 
@@ -62,3 +63,6 @@ docker run -d \
 5. Select **Sign Up**. (You might see a warning to change your password. You can ignore that warning.)
 6. Log out from the developer account. Click the profile icon from the bottom-left corner and then click **Log out**. 
 7. Log in using the admin User ID (`admin`) and Password (`adminpass1`). 
+
+### Create a new Project
+
