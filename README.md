@@ -14,7 +14,7 @@ version: 1.2
 
 <details>
   <summary>Optional</summary>
-  - [A free account on Harness](https://app.harness.io/auth/#/signup/&?utm_source=website&utm_campaign=devrel&utm_content=gitness-devdays)
+  - <a href="https://app.harness.io/auth/#/signup/&?utm_source=website&utm_campaign=devrel&utm_content=gitness-devdays">A free account on Harness</a>
   - An image registry with push access, e.g. Docker Hub.
   - An external Kubernetes cluster like GKE, EKS, or DigitalOcean Kubernetes
   - A slack workspace with admin access to create a webhook for notifications.
