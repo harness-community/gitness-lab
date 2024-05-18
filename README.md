@@ -11,15 +11,7 @@ version: 1.2
 - [Docker installation](https://docs.docker.com/engine/install/) (tested with Docker Desktop 4.26.1 and docker CLI 24.0.7)
 - [k3d](https://k3d.io/) installed (tested with 5.6.3)
 - [kubectl](https://kubernetes.io/docs/reference/kubectl/) installed (tested with 1.28.2)
-
-<details>
-  <summary>Optional Prerequisites</summary>
-  - <a href="https://app.harness.io/auth/#/signup/&?utm_source=website&utm_campaign=devrel&utm_content=gitness-devdays">A free account on Harness</a>
-
-  - An image registry with push access, e.g. Docker Hub.
-  - An external Kubernetes cluster like GKE, EKS, or DigitalOcean Kubernetes
-  - A slack workspace with admin access to create a webhook for notifications.
-</details>
+- (Optional) A slack workspace with admin access to create a webhook for notifications.
 
 ## Get Started
 
@@ -67,3 +59,59 @@ docker run -d \
 
 ### Create a new Project
 
+1. Select **New Project**.
+2. Enter a project Name (devdays) and optional Description (Gitness is awesome).
+3. Select **Create Project**.
+
+Optionally, Gitness can [import projects](https://docs.gitness.com/administration/project-management#import-a-project) from external sources (such as GitLab groups or GitHub organizations).
+
+### Create and configure a local Kubernetes Cluster
+
+Create a k3d cluster, passing the Docker network, a specific API port, and a Docker registry.
+
+```shell
+k3d cluster create --network gitness --api-port 9090 --registry-use k3d-registry.localhost:5000 devdays
+kubectl cluster-info
+```
+
+Create the gitness namespace.
+
+```shell
+kubectl create namespace gitness
+```
+
+Download the [service account manifest file](service-account.yml).
+
+```shell
+curl -sLO https://raw.githubusercontent.com/harness-community/gitness-lab/main/service-account.yml
+ls service-account.yml
+```
+
+Apply the service account manifest.
+
+```shell
+kubectl apply -f service-account.yml
+```
+
+Get the service account token.
+
+```shell
+kubectl get secret gitness-sa-token -n gitness -o=jsonpath='{.data.token}' | base64 -d && echo
+```
+
+Save this token. You’ll use this later.
+
+### Collapsible Section
+
+<details>
+  <summary>(Optional) Create a Slack Webhook</summary>
+This step is optional and is used to demonstrate how to send notifications from your Gitness pipeline. If you don’t have a Slack workspace set up already, you can skip this step.
+
+<ol>
+    <li> Once you have signed in to your Slack workspace, navigate to https://YOUR_SLACK_WORKSPACE_NAME.slack.com/apps and search for <b>Incoming WebHooks</b> under the apps.
+    <li> Click <b>Add to Slack</b> and either choose an existing channel or create a new one where the notifications will be sent.
+    <li>Click <b>Add Incoming Webhook Integration</b>.
+    <li>Copy the Webhook URL under Setup Instructions. You’ll use this later.
+</ol>
+
+</details>
