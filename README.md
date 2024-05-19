@@ -153,3 +153,17 @@ This is how you can create a new repository in Gitness. In the next section, you
 2. You’ll import a popular Go repository called **podinfo**. Use **harness-community** for Organization and **podinfo** for Repository. Click **Import Repository**. The repository import should happen fast.
 
 ![Import Repo Detail](assets/import-repo-detail.png)
+
+### Clone Repository
+
+Next, you’ll clone the podinfo repository using VS Code. 
+
+1. Open VS Code on your local machine and click **Clone Repository**.
+
+![Clone Repo VS Code](assets/clone-repo-vs-code.png)
+
+2. On the Gitness console, click **Clone** and copy the Git clone URL (there’s a copy to clipboard button).
+
+![Git Clone URL](assets/git-clone-url.png)
+
+3. Go back to VS Code and paste the Git clone URL. Select the directory where you want the repository to be copied. This will clone the remote repository in your local machine.
