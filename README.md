@@ -114,3 +114,32 @@ This step is optional and is used to demonstrate how to send notifications from 
 </ol>
 
 </details>
+
+## Code Repo
+
+### Create a Repository
+
+1. In your project, select **Repositories**, and then select **New Repository**.
+2. Enter a repository **Name** and optional **Description**. Let’s use `gitness-is-awesome` for the repository name.
+3. Gitness repositories are initialized with a main branch, unless you specify a different name for the base branch. To change the base branch name, select main and enter a name for the base branch.
+4. Select your preference for visibility (**Public** or **Private**). Let’s keep the visibility **Private** for this example. 
+5. Optionally, you can add a License, .gitignore, or README file to your repository. Check the box **Add a README file**.
+6. Select **Create Repository**.
+
+![gitness-is-awesome repo create](assets/gitness-is-awesome-repo-create.png)
+
+Once the repository is created, click **+ New File**, give the file a name **app.py**, and paste the following:
+
+```python
+# app.py
+
+def main():
+    print("Gitness is awesome!")
+
+if __name__ == "__main__":
+    main()
+```
+
+7. Click **Commit Changes** and then **Commit**.
+
+This is how you can create a new repository in Gitness. In the next section, you’ll import a repository from GitHub.
