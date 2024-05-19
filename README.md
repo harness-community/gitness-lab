@@ -143,3 +143,13 @@ if __name__ == "__main__":
 7. Click **Commit Changes** and then **Commit**.
 
 This is how you can create a new repository in Gitness. In the next section, you’ll import a repository from GitHub.
+
+### Import Repository
+
+1. Click on **Repositories**, click on the dropdown and then **Import Repository**.
+
+![Import Repo](assets/import-repo.png)
+
+2. You’ll import a popular Go repository called **podinfo**. Use **harness-community** for Organization and **podinfo** for Repository. Click **Import Repository**. The repository import should happen fast.
+
+![Import Repo Detail](assets/import-repo-detail.png)
