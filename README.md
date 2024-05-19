@@ -167,3 +167,21 @@ Next, you’ll clone the podinfo repository using VS Code.
 ![Git Clone URL](assets/git-clone-url.png)
 
 3. Go back to VS Code and paste the Git clone URL. Select the directory where you want the repository to be copied. This will clone the remote repository in your local machine.
+
+### Webhook
+
+You can send data to HTTP endpoints from actions in your repository, such as opened pull requests, new branches, and more. For this exercise, you’ll use [webhook.site](webhook.site) - a website that offers unique, random URLs to instantly receive and inspect all incoming HTTP requests and webhooks in real-time, facilitating testing and debugging.
+
+1. Navigate to webhook.site and copy your unique URL.
+
+![Webhook Site Unique URL](assets/webhook-site-url.png)
+
+2. On Gitness, click on **Webhooks** under the podinfo repository and then **+ New Webhook**.
+3. Give this webhook a name: **trigger_on_pr**.
+4. Paste the unique URL you copied under **Payload URL**. You can leave out the **Secret**.
+5. Choose **Let me select individual events** and select **PR created**.
+6. Click **Create Webhook**.
+
+![Webhook PR created](assets/webhook-pr-created.png)
+
+Continue to the next section to create a PR workflow. Once you raise a PR, you’ll see the trigger in action on this site.
