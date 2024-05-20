@@ -214,9 +214,9 @@ Once the push is complete, you should see the remote repository reflect the chan
 
 ![Webhook triggered PR created](assets/webhook-site-pr-created.png)
 
-> [!NOTE] 
+> **Note**
 
-> Switch from the **developer** account to the **admin** account before moving to the next step, as the developer account doesn’t have permission to edit the webhook.
+Switch from the **developer** account to the **admin** account before moving to the next step, as the developer account doesn’t have permission to edit the webhook.
 
 9. Toggle the webhook off from the podinfo repository under **Webhooks** → **trigger_on_pr**.
 
@@ -232,9 +232,9 @@ You can use Gitness’ built-in [Gitleaks](https://github.com/gitleaks/gitleaks)
 
 You can enable secret scanning for individual repositories. Once enabled on a repo, any push event to that repo that contains a commit matching a recognized secret pattern is denied.
 
-> [!NOTE] 
+> **Note**
 
-> Gitness Secret Scanning scans only new/changed code in commits that users attempt to push **after** you enable Secret Scanning on a repo. Secrets in existing/unchanged code aren't detected.
+Gitness Secret Scanning scans only new/changed code in commits that users attempt to push **after** you enable Secret Scanning on a repo. Secrets in existing/unchanged code aren't detected.
 
 1. Go to the podinfo repository where you want to enable secret scanning and select **Settings**.
 2. Select the **Security** tab.
