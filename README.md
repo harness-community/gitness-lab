@@ -539,4 +539,75 @@ kubectl -n gitness port-forward svc/my-project-podinfo 8080:9898
 
 ### Notify on build or deployment failure
 
+Let’s update the **build-deploy-pipeline** to include a notification step which gets executed when a previous step fails. From **Pipelines** --> **build-deploy-pipeline**, click **Edit** and replace the existing pipeline YAML as follows. Click **Save** instead of **Save and Run**.
 
+```YAML
+kind: pipeline
+spec:
+  stages:
+    - type: ci
+      spec:
+        steps:
+          - name: test
+            type: run
+            spec:
+              container: golang
+              script: |-
+                go test -v ./...
+
+          - name: build
+            type: plugin
+            spec:
+              name: docker
+              inputs:
+                insecure: true
+                repo: k3d-registry.localhost:5000/podinfo
+                registry: k3d-registry.localhost:5000
+                tags: ${{ build.number }}
+          - name: deploy
+            type: plugin
+            spec:
+              name: helm3
+              inputs:
+                add_repos: "podinfo=https://stefanprodan.github.io/podinfo"
+                chart: podinfo/podinfo
+                kube_api_server: "https://host.docker.internal:9090"
+                kube_service_account: gitness-sa
+                kube_token: ${{ secrets.get('kube_token') }}
+                mode: upgrade
+                namespace: gitness
+                release: my-project
+                skip_tls_verify: true
+                values: image.repository=k3d-registry.localhost:5000/podinfo,image.tag=${{ build.number }},ui.message=Hello 👋 from build ${{ build.number }}
+            when:
+              build.source == "master"
+              and
+              build.event matches "manual|push"
+
+          - name: notify
+            type: plugin
+            when: failure()
+            spec:
+              name: webhook
+              inputs:
+                content_type: application/json
+                template: |
+                  {
+                    "name": "BuildBot Notification",
+                    Repo: {{ repo.name }},
+                    Build Number {{ build.number }},
+                    Build Event: {{ build.event }},
+                    Build Status: {{ build.status }},
+                  }
+                urls: ${{ secrets.get("webhook_url") }}
+```                
+
+Now, let's introduce a failure by deleting the `gitness` namespace.
+
+```shell
+kubectl delete namespace gitness
+```
+
+Click **Run** for the **build-deploy-pipeline** and you'll observe a failure for the **deploy** step. This will make the **notify** step execute and you'll see the following notification on webhook.site.
+
+![Final webhook-site notification](assets/final-webhook-site-notification.png)
