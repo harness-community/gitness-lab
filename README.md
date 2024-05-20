@@ -243,7 +243,7 @@ Gitness Secret Scanning scans only new/changed code in commits that users attemp
 
 Now, from your VS Code, create a new file `config` and add the following:
 
-```
+```python
 AWS_ACCESS_KEY=AKIAIOSFODNN7EXAMPLE
 AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 ```
