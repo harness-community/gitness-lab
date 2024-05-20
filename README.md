@@ -322,7 +322,7 @@ For this lab, `kube_token` and `webhook_url` are considered secrets. Let’s add
 
 Let's create a new pipeline **webhook-pipeline**. Select **Pipelines** from the left navigation menu and then **+ New Pipeline**. Give this pipeline a name **webhook-pipeline** and click **Create**.
  
-Replace the existing pipeline with the following:
+Replace the existing pipeline with the following and click **Run**:
 
 ```YAML
 kind: pipeline
@@ -358,4 +358,47 @@ spec:
 
 The test step fails because go is not installed in the alpine docker image by default, which causes the notify step to run. Check the webhook.site dashboard to ensure that a notification is sent.
 
+![Webhook pipeline fail notification](assets/webhook-pipeline-fail.png)
+
+<details>
+  <summary>(Optional) Create a Slack Webhook</summary>
+
+Alternatively, if you configured a Slack webhook, replace the webhook pipeline with the slack plugin. Update the pipeline as below:
+
+```YAML
+kind: pipeline
+spec:
+  stages:
+  - type: ci
+    spec:
+      steps:
+      - name: test
+        type: run
+        spec:
+          container: alpine
+          script: |-
+            go test -v ./...
+
+      - name: notify
+        type: plugin
+        when: failure()
+        spec:
+          name: slack
+          inputs:
+            webhook: ${{ secrets.get("webhook_url") }}
+            template: |
+                  {
+                    "name": "BuildBot Notification",
+                    Repo: {{ repo.name }},
+                    Build Number {{ build.number }},
+                    Build Event: {{ build.event }},
+                    Build Status: {{ build.status }},
+                  }
+```
+
+Now, re-run the pipeline and check your slack workspace and channel to ensure that a notification is sent.
+
+![Webhook Pipeline Slack Notification](assets/webhook-pipeline-slack.png)
+
+</details>
 
