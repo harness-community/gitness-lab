@@ -243,14 +243,14 @@ Gitness Secret Scanning scans only new/changed code in commits that users attemp
 
 Now, from your VS Code, create a new file `config` and add the following:
 
-```shell
+```
 AWS_ACCESS_KEY=AKIAIOSFODNN7EXAMPLE
 AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 ```
 
 Now try to push this commit to the remote **podinfo** repository. You should see the following error on the git log:
 
-```shell
+```
 remote: Push contains secret:        
 remote: 
 remote:   aws-access-token in config:1        
