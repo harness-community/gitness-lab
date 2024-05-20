@@ -250,7 +250,7 @@ AWS_SECRET_ACCESS_KEY="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
 
 Now try to push this commit to the remote **podinfo** repository. You should see the following error on the git log:
 
-```
+```bash
 remote: Push contains secret:        
 remote: 
 remote:   aws-access-token in config:1        
@@ -293,7 +293,7 @@ Click Save and **Run** → **Run Pipeline**.
 
 You’ll see something like this for the **print-build-info** stage execution:
 
-```shell
+```bash
 latest: Pulling from alpine
 Digest: sha256:c15c54221625d866fb6a98e74dcb1c6c4a24ab7c6585632db07f45219ea17efd
 Status: Image is up to date for alpine:latest
