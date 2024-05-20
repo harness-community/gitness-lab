@@ -442,7 +442,7 @@ spec:
 
 Let’s create a new pipeline for the CI/CD workflow. Under podinfo repository, select **Pipelines** from the left navigation menu and then **+ New Pipeline**. Give this pipeline a name `build-deploy-pipeline` and click **Create**.
 
-Replace the auto-generated pipeline with the following and click **Save**.
+Replace the auto-generated pipeline with the following and click **Save and Run** --> **Run Pipeline**.
 
 ```YAML
 kind: pipeline
@@ -467,7 +467,55 @@ spec:
                 repo: k3d-registry.localhost:5000/podinfo
                 registry: k3d-registry.localhost:5000
                 tags: ${{ build.number }}
+         
+            - name: deploy
+            type: plugin
+            spec:
+              name: helm3
+              inputs:
+                add_repos: "podinfo=https://stefanprodan.github.io/podinfo"
+                chart: podinfo/podinfo
+                kube_api_server: "https://host.docker.internal:9090"
+                kube_service_account: gitness-sa
+                kube_token: ${{ secrets.get('kube_token') }}
+                mode: upgrade
+                namespace: gitness
+                release: my-project
+                skip_tls_verify: true
+                values: image.repository=k3d-registry.localhost:5000/podinfo,image.tag=${{ build.number }},ui.message=Hello 👋 from build ${{ build.number }}
+            when:
+              build.source == "master"
+              and
+              build.event matches "manual|push"
 ```
+
+Notice that the deploy step uses the helm3 plugin. The deploy step also uses [conditions](https://docs.gitness.com/pipelines/conditions) to ensure it only runs for manual runs or push [events](https://docs.gitness.com/reference/pipelines/expression_variables#buildevent) where the [source](https://docs.gitness.com/reference/pipelines/expression_variables#buildsource) is the master branch.
+
+When the pipeline completes, query the local Docker API to see the image and tags.
+
+```shell
+curl http://localhost:5000/v2/_catalog
+
+curl http://localhost:5000/v2/podinfo/tags/list
+```
+
+Inspect the running pod.
+
+```shell
+kubectl -n gitness get deploy/my-project-podinfo -o wide
+```
+
+This output shows that the `k3d-registry.localhost:5000/podinfo:1` image is running.
+
+Use port-forwarding to access the service.
+
+```shell
+kubectl -n gitness port-forward svc/my-project-podinfo 8080:9898
+```
+
+Open http://localhost:8080/ to view the running service.
+
+![podinfo running](assets/podinfo-running.png)
 
 ### Triggers
 
