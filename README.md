@@ -611,3 +611,31 @@ kubectl delete namespace gitness
 Click **Run** for the **build-deploy-pipeline** and you'll observe a failure for the **deploy** step. This will make the **notify** step execute and you'll see the following notification on webhook.site.
 
 ![Final webhook-site notification](assets/final-webhook-site-notification.png)
+
+You can find the complete pipeline YAML [here](build-deploy-pipeline.yaml).
+
+## Cleaning up
+
+Delete the cluster.
+
+```shell
+k3d cluster delete devdays
+```
+
+Delete the registry.
+
+```shell
+k3d registry delete registry.localhost
+```
+
+Stop the Gitness Docker container.
+
+```shell
+docker stop gitness
+```
+
+Delete the Gitness Docker network.
+
+```shell
+docker network rm gitness
+```
