@@ -225,3 +225,38 @@ Switch from the **developer** account to the **admin** account before moving to 
 10. Now log out from the current user profile and log back in as the administrator user. 
 
 **Don’t merge the PR yet**. You’ll do it later at the CI/CD section. 
+
+### Secret Scanning
+
+You can use Gitness’ built-in [Gitleaks](https://github.com/gitleaks/gitleaks) integration to prevent hardcoded secrets like passwords, API keys, and tokens from being introduced into your Git repository during a push. 
+
+You can enable secret scanning for individual repositories. Once enabled on a repo, any push event to that repo that contains a commit matching a recognized secret pattern is denied.
+
+> **_NOTE:_** 
+
+Gitness Secret Scanning scans only new/changed code in commits that users attempt to push **after** you enable Secret Scanning on a repo. Secrets in existing/unchanged code aren't detected.
+
+1. Go to the podinfo repository where you want to enable secret scanning and select **Settings**.
+2. Select the **Security** tab.
+3. Enable **Secret Scanning**.
+4. Select **Save**.
+
+Now, from your VS Code, create a new file `config` and add the following:
+
+```shell
+AWS_ACCESS_KEY=AKIAIOSFODNN7EXAMPLE
+AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+```
+
+Now try to push this commit to the remote **podinfo** repository. You should see the following error on the git log:
+
+```shell
+remote: Push contains secret:        
+remote: 
+remote:   aws-access-token in config:1        
+remote:       Secret:  AKIAIOSFODNN7EXAMPLE        
+remote:       Commit:  1469e0435ac535dfd552ab443248493fc4fb1192        
+remote:       Details: Identified a pattern that may indicate AWS credentials, risking unauthorized cloud resource access and data breaches on AWS platforms.
+```
+
+The above AWS credentials are sample ones from the AWS documentation and are not valid credentials 🙂.
