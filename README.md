@@ -316,9 +316,9 @@ For this lab, `kube_token` and `webhook_url` are considered secrets. Let’s add
 
 [Conditions](https://docs.gitness.com/pipelines/conditions) limit pipeline [step](https://docs.gitness.com/category/steps) execution at runtime. Gitness sets [variables](https://docs.gitness.com/reference/pipelines/expression_variables) that can be used in conditions.
 
-> [!TIP]
+> **Tip**
 
-> Gitness supports multiple pipelines per repository. Creating a pipeline per [trigger](https://docs.gitness.com/pipelines/triggers) (push, pull request, tag) can reduce the need for conditions. We will cover triggers more in the next section.
+Gitness supports multiple pipelines per repository. Creating a pipeline per [trigger](https://docs.gitness.com/pipelines/triggers) (push, pull request, tag) can reduce the need for conditions. We will cover triggers more in the next section.
 
 Let's create a new pipeline **webhook-pipeline**. Select **Pipelines** from the left navigation menu and then **+ New Pipeline**. Give this pipeline a name **webhook-pipeline** and click **Create**.
  
