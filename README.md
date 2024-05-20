@@ -320,7 +320,7 @@ For this lab, `kube_token` and `webhook_url` are considered secrets. Let’s add
 
 Gitness supports multiple pipelines per repository. Creating a pipeline per [trigger](https://docs.gitness.com/pipelines/triggers) (push, pull request, tag) can reduce the need for conditions. We will cover triggers more in the next section.
 
-Let's create a new pipeline **webhook-pipeline**. Select **Pipelines** from the left navigation menu and then **+ New Pipeline**. Give this pipeline a name **webhook-pipeline** and click **Create**.
+Let's create a new pipeline. Select **Pipelines** from the left navigation menu and then **+ New Pipeline**. Give this pipeline a name `webhook-pipeline` and click **Create**.
  
 Replace the existing pipeline with the following and click **Run**:
 
@@ -435,3 +435,9 @@ spec:
                   }
                 urls: ${{ secrets.get("webhook_url") }}
 ```
+
+## CI/CD
+
+### Build + Push + Deploy to Kubernetes Cluster
+
+Let’s create a new pipeline for the CI/CD workflow. Under podinfo repository, select **Pipelines** from the left navigation menu and then **+ New Pipeline**. Give this pipeline a name `build-deploy-pipeline` and click **Create**.
