@@ -121,7 +121,7 @@ This step is optional and is used to demonstrate how to send notifications from 
 
 1. In your project, select **Repositories**, and then select **New Repository**.
 2. Enter a repository **Name** and optional **Description**. Let’s use `gitness-is-awesome` for the repository name.
-3. Gitness repositories are initialized with a main branch, unless you specify a different name for the base branch. To change the base branch name, select main and enter a name for the base branch.
+3. Gitness repositories are initialized with a main branch, unless you specify a different name for the base branch.
 4. Select your preference for visibility (**Public** or **Private**). Let’s keep the visibility **Private** for this example. 
 5. Optionally, you can add a License, .gitignore, or README file to your repository. Check the box **Add a README file**.
 6. Select **Create Repository**.
@@ -185,3 +185,43 @@ You can send data to HTTP endpoints from actions in your repository, such as ope
 ![Webhook PR created](assets/webhook-pr-created.png)
 
 Continue to the next section to create a PR workflow. Once you raise a PR, you’ll see the trigger in action on this site.
+
+### PR Workflow
+
+1. For this section, let’s add **developer** user to the project. 
+2. From the left navigation, click on **Members** and then **+ Add Member**. Find **developer** from the **User** dropdown, choose **Contributor** role, and select **Add member to this project**.
+
+![Add developer to devdays project](assets/add-developer-member.png)
+
+3. On the Gitness portal, log out from this profile by clicking the icon on the bottom-left corner and log back in using the developer credentials. 
+4. Back in VS Code, create a new branch named **update-app-version** and commit a change. For instance, this commit updates the `pkg/version/version.go` file, resulting in the application version changing from **6.6.1** to **6.6.2**.
+
+![Update image tag](assets/update-image-tag.png)
+
+5. When you commit and push changes, you’ll be prompted to enter username and password for the remote repository. Click **Generate Clone Credential** under **Git Clone URL** and use the generated credentials.
+
+![Generate Clone Credentials](assets/generate-clone-creds.png)
+
+Once the push is complete, you should see the remote repository reflect the changes.
+
+6. Click on **Pull Requests** from the left navigation menu and then click **+ New Pull Request**. Select your feature branch as the source branch, add a PR description, and click **Create Pull Request**. 
+
+![Create PR](assets/create-pr.png)
+
+7. Click **Add +** under Reviewers and find **Administrator** from the list.
+
+8. Navigate to the webhook.site dashboard and you should see the POST request details triggered by your PR. 
+
+![Webhook triggered PR created](assets/webhook-site-pr-created.png)
+
+> **_NOTE:_** 
+
+Switch from the **developer** account to the **admin** account before moving to the next step, as the developer account doesn’t have permission to edit the webhook.
+
+9. Toggle the webhook off from the podinfo repository under **Webhooks** → **trigger_on_pr**.
+
+![Disable Webhook](assets/disable-webhook.png)
+
+10. Now log out from the current user profile and log back in as the administrator user. 
+
+**Don’t merge the PR yet**. You’ll do it later at the CI/CD section. 
