@@ -523,5 +523,20 @@ When code is pushed to a repository, a pull request is opened, or a tag is creat
 
 When creating a pipeline, Gitness automatically creates a default trigger for you. You can customize this trigger, or create additional triggers.
 
-Modify the default trigger (**build-deploy-pipeline** → **Pipeline Settings** → **Triggers** → **default**) for your pipeline by enabling the “Branch Updated” setting, then save the change.
+Modify the default trigger (**build-deploy-pipeline** → **Pipeline Settings** → **Triggers** → **default**) for your pipeline by enabling the **Pull Request Merged** setting, then save the change.
+
+![PR merged trigger](assets/pr-merged-trigger.png)
+
+Go to **Pull Requests** and **Squash and Merge** the open PR (there should only be one). This will trigger the pipeline, and a new image with the updated image will be deployed.
+
+Execute the port-forwarding command again to see the running podinfo app with the new version.
+
+```shell
+kubectl -n gitness port-forward svc/my-project-podinfo 8080:9898
+```
+
+![podinfo version 6.6.2](assets/podinfo-running-662.png)
+
+### Notify on build or deployment failure
+
 
