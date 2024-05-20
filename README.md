@@ -214,9 +214,9 @@ Once the push is complete, you should see the remote repository reflect the chan
 
 ![Webhook triggered PR created](assets/webhook-site-pr-created.png)
 
-> **_NOTE:_** 
+> [!NOTE] 
 
-Switch from the **developer** account to the **admin** account before moving to the next step, as the developer account doesn’t have permission to edit the webhook.
+> Switch from the **developer** account to the **admin** account before moving to the next step, as the developer account doesn’t have permission to edit the webhook.
 
 9. Toggle the webhook off from the podinfo repository under **Webhooks** → **trigger_on_pr**.
 
@@ -232,9 +232,9 @@ You can use Gitness’ built-in [Gitleaks](https://github.com/gitleaks/gitleaks)
 
 You can enable secret scanning for individual repositories. Once enabled on a repo, any push event to that repo that contains a commit matching a recognized secret pattern is denied.
 
-> **_NOTE:_** 
+> [!NOTE] 
 
-Gitness Secret Scanning scans only new/changed code in commits that users attempt to push **after** you enable Secret Scanning on a repo. Secrets in existing/unchanged code aren't detected.
+> Gitness Secret Scanning scans only new/changed code in commits that users attempt to push **after** you enable Secret Scanning on a repo. Secrets in existing/unchanged code aren't detected.
 
 1. Go to the podinfo repository where you want to enable secret scanning and select **Settings**.
 2. Select the **Security** tab.
@@ -301,3 +301,61 @@ Status: Image is up to date for alpine:latest
 Build number: 1
 Build commit: 5369dca9d8365a2b3540d6581ab52b4744387aef
 ```
+
+### Secrets
+
+Gitness offers a built-in secret manager to store and manage sensitive information, such as passwords, tokens, and ssh keys. In Gitness, secrets are managed at the project level. 
+
+For this lab, `kube_token` and `webhook_url` are considered secrets. Let’s add these two to Gitness secret manager.
+
+1. From the left hand navigation, click **Secrets** → **+ New Secret**.
+2. Name this secret `kube_token` and paste the service account token of the Kubernetes cluster from a previous step as the value.
+3. Repeat this process to create another secret `webhook_url` and use the webhook URL from webhook.site. (Optional) If you have a Slack webhook, you can use that value instead.
+
+### Pipeline Conditions
+
+[Conditions](https://docs.gitness.com/pipelines/conditions) limit pipeline [step](https://docs.gitness.com/category/steps) execution at runtime. Gitness sets [variables](https://docs.gitness.com/reference/pipelines/expression_variables) that can be used in conditions.
+
+> [!TIP]
+
+> Gitness supports multiple pipelines per repository. Creating a pipeline per [trigger](https://docs.gitness.com/pipelines/triggers) (push, pull request, tag) can reduce the need for conditions. We will cover triggers more in the next section.
+
+Let's create a new pipeline **webhook-pipeline**. Select **Pipelines** from the left navigation menu and then **+ New Pipeline**. Give this pipeline a name **webhook-pipeline** and click **Create**.
+ 
+Replace the existing pipeline with the following:
+
+```YAML
+kind: pipeline
+spec:
+  stages:
+    - name: build
+      type: ci
+      spec:
+        steps:
+          - name: test
+            type: run
+            spec:
+              container: alpine
+              script: |-
+                go test -v ./...
+          - name: webhook
+            type: plugin
+            when: failure()
+            spec:
+              name: webhook
+              inputs:
+                content_type: application/json
+                template: |
+                  {
+                    "name": "BuildBot Notification",
+                    Repo: {{ repo.name }},
+                    Build Number {{ build.number }},
+                    Build Event: {{ build.event }},
+                    Build Status: {{ build.status }},
+                  }
+                urls: ${{ secrets.get("webhook_url") }}
+```
+
+The test step fails because go is not installed in the alpine docker image by default, which causes the notify step to run. Check the webhook.site dashboard to ensure that a notification is sent.
+
+
