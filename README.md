@@ -361,7 +361,7 @@ The test step fails because go is not installed in the alpine docker image by de
 ![Webhook pipeline fail notification](assets/webhook-pipeline-fail.png)
 
 <details>
-  <summary>(Optional) Create a Slack Webhook</summary>
+  <summary>(Optional) Using a Slack Webhook</summary>
 
 Alternatively, if you configured a Slack webhook, replace the webhook pipeline with the slack plugin. Update the pipeline as below:
 
@@ -402,3 +402,36 @@ Now, re-run the pipeline and check your slack workspace and channel to ensure th
 
 </details>
 
+Now update the pipeline to replace the **alpine** image with the **golang** image. Run the pipeline again, this time it will pass, and the **notify** step will not run.
+
+```YAML
+kind: pipeline
+spec:
+  stages:
+    - name: build
+      type: ci
+      spec:
+        steps:
+          - name: test
+            type: run
+            spec:
+              container: golang
+              script: |-
+                go test -v ./...
+          - name: webhook
+            type: plugin
+            when: failure()
+            spec:
+              name: webhook
+              inputs:
+                content_type: application/json
+                template: |
+                  {
+                    "name": "BuildBot Notification",
+                    Repo: {{ repo.name }},
+                    Build Number {{ build.number }},
+                    Build Event: {{ build.event }},
+                    Build Status: {{ build.status }},
+                  }
+                urls: ${{ secrets.get("webhook_url") }}
+```
