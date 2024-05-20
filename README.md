@@ -260,3 +260,44 @@ remote:       Details: Identified a pattern that may indicate AWS credentials, r
 ```
 
 The above AWS credentials are sample ones from the AWS documentation and are not valid credentials 🙂.
+
+## Pipelines
+
+Pipelines in Gitness help you automate steps in your software delivery process, such as initiating code builds, running automated tests, and deploying to a staging or production environment. Gitness supports multiple pipelines per repository.
+
+### Basic Pipeline
+
+Let’s create a simple pipeline in Gitness that will print the build number and the git commit sha for the current running build using [expression variables](https://docs.gitness.com/reference/pipelines/expression_variables).
+
+Under **podinfo** repository, select **Pipelines** from the left navigation menu and then **+ New Pipeline**. Give this pipeline a name `hello-pipeline` and click **Create**.
+
+Replace the existing pipeline with the following:
+
+```YAML
+kind: pipeline
+spec:
+  stages:
+  - type: ci
+    spec:
+      steps:
+      - name: print-build-info
+        type: run
+        spec:
+          container: alpine
+          script: |-
+            echo "Build number: ${{ build.number }}"
+            echo "Build commit: ${{ build.commit }}"
+```
+
+Click Save and **Run** → **Run Pipeline**. 
+
+You’ll see something like this for the **print-build-info** stage execution:
+
+```shell
+latest: Pulling from alpine
+Digest: sha256:c15c54221625d866fb6a98e74dcb1c6c4a24ab7c6585632db07f45219ea17efd
+Status: Image is up to date for alpine:latest
++ echo "Build number: 1"\necho "Build commit: 5369dca9d8365a2b3540d6581ab52b4744387aef"
+Build number: 1
+Build commit: 5369dca9d8365a2b3540d6581ab52b4744387aef
+```
