@@ -170,7 +170,7 @@ Next, you’ll clone the podinfo repository using VS Code.
 
 ### Webhook
 
-You can send data to HTTP endpoints from actions in your repository, such as opened pull requests, new branches, and more. For this exercise, you’ll use [webhook.site](webhook.site) - a website that offers unique, random URLs to instantly receive and inspect all incoming HTTP requests and webhooks in real-time, facilitating testing and debugging.
+You can send data to HTTP endpoints from actions in your repository, such as opened pull requests, new branches, and more. For this exercise, you’ll use [webhook.site](https://webhook.site/) - a website that offers unique, random URLs to instantly receive and inspect all incoming HTTP requests and webhooks in real-time, facilitating testing and debugging.
 
 1. Navigate to webhook.site and copy your unique URL.
 
@@ -221,8 +221,6 @@ Switch from the **developer** account to the **admin** account before moving to 
 9. Toggle the webhook off from the podinfo repository under **Webhooks** → **trigger_on_pr**.
 
 ![Disable Webhook](assets/disable-webhook.png)
-
-10. Now log out from the current user profile and log back in as the administrator user. 
 
 **Don’t merge the PR yet**. You’ll do it later at the CI/CD section. 
 
