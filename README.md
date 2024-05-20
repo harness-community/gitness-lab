@@ -441,3 +441,39 @@ spec:
 ### Build + Push + Deploy to Kubernetes Cluster
 
 Let’s create a new pipeline for the CI/CD workflow. Under podinfo repository, select **Pipelines** from the left navigation menu and then **+ New Pipeline**. Give this pipeline a name `build-deploy-pipeline` and click **Create**.
+
+Replace the auto-generated pipeline with the following and click **Save**.
+
+```YAML
+kind: pipeline
+spec:
+  stages:
+    - type: ci
+      spec:
+        steps:
+          - name: test
+            type: run
+            spec:
+              container: golang
+              script: |-
+                go test -v ./...
+
+          - name: build
+            type: plugin
+            spec:
+              name: docker
+              inputs:
+                insecure: true
+                repo: k3d-registry.localhost:5000/podinfo
+                registry: k3d-registry.localhost:5000
+                tags: ${{ build.number }}
+```
+
+### Triggers
+
+When code is pushed to a repository, a pull request is opened, or a tag is created, Gitness can automatically [trigger](https://docs.gitness.com/pipelines/triggers) pipeline execution.
+
+When creating a pipeline, Gitness automatically creates a default trigger for you. You can customize this trigger, or create additional triggers.
+
+Modify the default trigger (**build-deploy-pipeline** → **Pipeline Settings** → **Triggers** → **default**) for your pipeline by enabling the “Branch Updated” setting, then save the change.
+
