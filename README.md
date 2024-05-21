@@ -268,6 +268,8 @@ remote:   Commit:  1469e0435ac535dfd552ab443248493fc4fb1192
 remote:   Details: Identified a pattern that may indicate AWS credentials, risking unauthorized cloud resource access and data breaches on AWS platforms.
 ```
 
+If you already have gitleaks configured locally, you'll see a different error message, and your commits might be blocked before they reach Gitness (and good for you for being proactive! :shield:)
+
 The above AWS credentials are sample ones from the AWS documentation and are not valid credentials 🙂.
 
 ## Pipelines
