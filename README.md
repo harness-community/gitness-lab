@@ -6,14 +6,19 @@ version: 1.2
 
 # Gitness Workshop
 
+This workshop assumes a clean environment where Gitness hasn't been installed yet. If you already have a Gitness instance running, please check with your workshop instructor for any required changes to some of the commands.
+
 ## Prerequisites
 
 - [Docker installation](https://docs.docker.com/engine/install/) (tested with Docker Desktop 4.26.1 and docker CLI 24.0.7)
 - [k3d](https://k3d.io/) installed (tested with 5.6.3)
 - [kubectl](https://kubernetes.io/docs/reference/kubectl/) installed (tested with 1.28.2)
+- [Visual Studio Code](https://code.visualstudio.com/) or any other code editor
 - (Optional) A slack workspace with admin access to create a webhook for notifications.
 
 ## Get Started
+
+If any of the ports suggested in the following instructions are in use, feel free to use an available port and modify the subsequent commands accordingly.
 
 ### Create a Docker Network
 
@@ -34,7 +39,13 @@ k3d registry create registry.localhost --port 5000
 
 ### Start Gitness
 
-1. Use the following Docker command to run Gitness (observe the network this container uses):
+1. Pull in the Gitness image
+
+```shell
+docker pull harness/gitness:3.0.0-beta.7
+```
+
+2. Use the following Docker command to run Gitness (observe the network this container uses):
 
 ```shell
 docker run -d \
@@ -50,12 +61,12 @@ docker run -d \
   --restart always \
   harness/gitness
 ```
-2. Once the container is running, open `localhost:3000` in your browser.
-3. Select **Sign Up**.
-4. Enter a User ID (`developer`), Email (`developer@example.com`), and Password (`devpass1`).
-5. Select **Sign Up**. (You might see a warning to change your password. You can ignore that warning.)
-6. Log out from the developer account. Click the profile icon from the bottom-left corner and then click **Log out**. 
-7. Log in using the admin User ID (`admin`) and Password (`adminpass1`). 
+3. Once the container is running, open `localhost:3000` in your browser.
+4. Select **Sign Up**.
+5. Enter a User ID (`developer`), Email (`developer@example.com`), and Password (`devpass1`).
+6. Select **Sign Up**. (You might see a warning to change your password. You can ignore that warning.)
+7. Log out from the developer account. Click the profile icon from the bottom-left corner and then click **Log out**. 
+8. Log in using the admin User ID (`admin`) and Password (`adminpass1`). 
 
 ### Create a new Project
 
@@ -140,7 +151,7 @@ if __name__ == "__main__":
     main()
 ```
 
-7. Click **Commit Changes** and then **Commit**.
+7. Click **Commit Changes** and then **Commit** directly to the **main** branch.
 
 This is how you can create a new repository in Gitness. In the next section, you’ll import a repository from GitHub.
 
@@ -150,9 +161,11 @@ This is how you can create a new repository in Gitness. In the next section, you
 
 ![Import Repo](assets/import-repo.png)
 
-2. You’ll import a popular Go repository called **podinfo**. Use **harness-community** for Organization and **podinfo** for Repository. Click **Import Repository**. The repository import should happen fast.
+2. You’ll import a popular Go repository called **podinfo**. Use **harness-community** for Organization and **podinfo** for Repository. Click **Import Repository**. The repository import should happen fast. Since this repository is public, anyone with access to this Gitness instance will be able to clone it without authentication.
 
 ![Import Repo Detail](assets/import-repo-detail.png)
+
+Once prompted, open the repository in VS code.
 
 ### Clone Repository
 
@@ -170,7 +183,7 @@ Next, you’ll clone the podinfo repository using VS Code.
 
 ### Webhook
 
-You can send data to HTTP endpoints from actions in your repository, such as opened pull requests, new branches, and more. For this exercise, you’ll use [webhook.site](https://webhook.site/) - a website that offers unique, random URLs to instantly receive and inspect all incoming HTTP requests and webhooks in real-time, facilitating testing and debugging.
+You can send data to HTTP endpoints from actions in your repository, such as opened pull requests, new branches, and more. For this exercise, you’ll use [webhook.site](https://webhook.site/) - a website that offers unique, random URLs to instantly receive and inspect all incoming HTTP requests and webhooks in real-time, facilitating testing and debugging. For free webhook.site users, the URL and its data are kept for 7 days. You can close the browser tab and still return to the same unique webhook.site URL.
 
 1. Navigate to webhook.site and copy your unique URL.
 
@@ -198,7 +211,7 @@ Continue to the next section to create a PR workflow. Once you raise a PR, you�
 
 ![Update image tag](assets/update-image-tag.png)
 
-5. When you commit and push changes, you’ll be prompted to enter username and password for the remote repository. Click **Generate Clone Credential** under **Git Clone URL** and use the generated credentials.
+5. When you commit and push changes, you’ll be prompted to enter username and password for the remote repository. On the Gitness console, click **Generate Clone Credential** under **Git Clone URL** and use the generated credentials.
 
 ![Generate Clone Credentials](assets/generate-clone-creds.png)
 
@@ -214,9 +227,9 @@ Once the push is complete, you should see the remote repository reflect the chan
 
 ![Webhook triggered PR created](assets/webhook-site-pr-created.png)
 
-> **Note**
+> [!NOTE]
 
-Switch from the **developer** account to the **admin** account before moving to the next step, as the developer account doesn’t have permission to edit the webhook.
+> Switch from the **developer** account to the **admin** account before moving to the next step, as the developer account doesn’t have permission to edit the webhook.
 
 9. Toggle the webhook off from the podinfo repository under **Webhooks** → **trigger_on_pr**.
 
@@ -230,9 +243,9 @@ You can use Gitness’ built-in [Gitleaks](https://github.com/gitleaks/gitleaks)
 
 You can enable secret scanning for individual repositories. Once enabled on a repo, any push event to that repo that contains a commit matching a recognized secret pattern is denied.
 
-> **Note**
+> [!NOTE]
 
-Gitness Secret Scanning scans only new/changed code in commits that users attempt to push **after** you enable Secret Scanning on a repo. Secrets in existing/unchanged code aren't detected.
+> Gitness Secret Scanning scans only new/changed code in commits that users attempt to push **after** you enable Secret Scanning on a repo. Secrets in existing/unchanged code aren't detected.
 
 1. Go to the podinfo repository where you want to enable secret scanning and select **Settings**.
 2. Select the **Security** tab.
@@ -318,7 +331,7 @@ For this lab, `kube_token` and `webhook_url` are considered secrets. Let’s add
 
 Gitness supports multiple pipelines per repository. Creating a pipeline per [trigger](https://docs.gitness.com/pipelines/triggers) (push, pull request, tag) can reduce the need for conditions. We will cover triggers more in the next section.
 
-Let's create a new pipeline. Select **Pipelines** from the left navigation menu and then **+ New Pipeline**. Give this pipeline a name `webhook-pipeline` and click **Create**.
+Let's create a new pipeline. Select **Repositories** --> **podinfo**, then **Pipelines** from the left navigation menu, and then **+ New Pipeline**. Give this pipeline a name `webhook-pipeline` and click **Create**.
  
 Replace the existing pipeline with the following and click **Run**:
 
@@ -466,7 +479,7 @@ spec:
                 registry: k3d-registry.localhost:5000
                 tags: ${{ build.number }}
          
-            - name: deploy
+          - name: deploy
             type: plugin
             spec:
               name: helm3
