@@ -36,9 +36,11 @@ spec:
                 skip_tls_verify: true
                 values: image.repository=k3d-registry.localhost:5000/podinfo,image.tag=${{ build.number }},ui.message=Hello 👋 from build ${{ build.number }}
             when:
-              build.source == "master"
+              build.branch == "master"
               and
-              build.event matches "manual|push"
+              build.event == "manual"
+              or
+              build.action == "pullreq_merged"
 
           - name: notify
             type: plugin
