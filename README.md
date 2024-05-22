@@ -234,7 +234,8 @@ Once the push is complete, you should see the remote repository reflect the chan
 
 ![Disable Webhook](assets/disable-webhook.png)
 
-**Don’t merge the PR yet**. You’ll do it later at the CI/CD section. 
+> [!CAUTION]
+> **Don't merge the PR yet**. You’ll do it later at the CI/CD section. 
 
 ### Secret Scanning
 
