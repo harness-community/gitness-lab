@@ -61,7 +61,7 @@ docker run -d \
   --restart always \
   harness/gitness
 ```
-3. Once the container is running, open `localhost:3000` in your browser.
+3. Once the container is running, open http://localhost:3000 in your browser.
 4. Select **Sign Up**.
 5. Enter a User ID (`developer`), Email (`developer@example.com`), and Password (`devpass1`).
 6. Select **Sign Up**. (You might see a warning to change your password. You can ignore that warning.)
