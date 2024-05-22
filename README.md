@@ -59,7 +59,7 @@ docker run -d \
   --network=gitness \
   --name gitness \
   --restart always \
-  harness/gitness
+  harness/gitness:3.0.0-beta.7
 ```
 3. Once the container is running, open http://localhost:3000 in your browser.
 4. Select **Sign Up**.
