@@ -495,12 +495,14 @@ spec:
                 skip_tls_verify: true
                 values: image.repository=k3d-registry.localhost:5000/podinfo,image.tag=${{ build.number }},ui.message=Hello 👋 from build ${{ build.number }}
             when:
-              build.source == "master"
+              build.branch == "master"
               and
-              build.event matches "manual|push"
+              build.event == "manual"
+              or
+              build.action == "pullreq_merged"
 ```
 
-Notice that the deploy step uses the helm3 plugin. The deploy step also uses [conditions](https://docs.gitness.com/pipelines/conditions) to ensure it only runs for manual runs or push [events](https://docs.gitness.com/reference/pipelines/expression_variables#buildevent) where the [source](https://docs.gitness.com/reference/pipelines/expression_variables#buildsource) is the master branch.
+Notice that the deploy step uses the helm3 plugin. The deploy step also uses [conditions](https://docs.gitness.com/pipelines/conditions) to ensure it only runs for manual [events](https://docs.gitness.com/reference/pipelines/expression_variables#buildevent) where the [branch](https://docs.gitness.com/reference/pipelines/expression_variables#buildbranch) is master, or the [action](https://docs.gitness.com/reference/pipelines/expression_variables#buildaction) is a pull request merge.
 
 When the pipeline completes, query the local Docker API to see the image and tags.
 
@@ -591,9 +593,11 @@ spec:
                 skip_tls_verify: true
                 values: image.repository=k3d-registry.localhost:5000/podinfo,image.tag=${{ build.number }},ui.message=Hello 👋 from build ${{ build.number }}
             when:
-              build.source == "master"
+              build.branch == "master"
               and
-              build.event matches "manual|push"
+              build.event == "manual"
+              or
+              build.action == "pullreq_merged"
 
           - name: notify
             type: plugin
