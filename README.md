@@ -265,7 +265,7 @@ Pipelines in Gitness help you automate steps in your software delivery process, 
 
 Let’s create a simple pipeline in Gitness that will print the build number and the git commit sha for the current running build using [expression variables](https://docs.gitness.com/reference/pipelines/expression_variables).
 
-Under **podinfo** repository, select **Pipelines** from the left navigation menu and then **+ New Pipeline**. Give this pipeline a name `hello-pipeline` and click **Create**.
+Under **podinfo** repository, select **Pipelines** from the left navigation menu and then **+ New Pipeline**. Give this pipeline a name `build-info-pipeline` and click **Create**.
 
 Replace the existing pipeline with the following:
 
@@ -287,7 +287,7 @@ spec:
 
 Click Save and **Run** → **Run Pipeline**. 
 
-You’ll see something like this for the **print-build-info** stage execution:
+You’ll see something like this for the `print-build-info` stage execution:
 
 ```
 latest: Pulling from alpine
@@ -298,7 +298,20 @@ Build number: 1
 Build commit: 5369dca9d8365a2b3540d6581ab52b4744387aef
 ```
 
-Select **Pipelines** from the left navigation menu, then click the menu (⋮) icon for the **hello-pipeline** pipeline on the right and select **Delete**. When prompted, select **Delete**.
+Let's trigger this pipeline from a pull request.
+
+1. Click on **Pull Requests** from the left navigation menu and then click **+ New Pull Request**. Select your feature branch as the source branch, add add description. You can view your commit in the **Commits** tab, view your changes in the **Changes** tab.
+
+   Click **Create Pull Request**, which will trigger the pull request pipeline in the **Checks** tab.
+
+   ![Create PR](assets/pull-request.gif)
+
+2. Click **Add +** under Reviewers and find **Administrator** from the list.
+
+> [!CAUTION]
+> **Don't merge the PR yet**. You’ll do it later at the CI/CD section. 
+
+3. Delete this pipeline by selecting **Pipelines** from the left navigation menu, then click the menu (⋮) icon for the **build-info-pipeline** pipeline on the right and select **Delete**. When prompted, select **Delete**.
 
 ### Secrets
 
@@ -427,7 +440,7 @@ spec:
                   Build Status: {{ build.status }}
 ```
 
-Select **Pipelines** from the left navigation menu, then click the menu (⋮) icon for the **webhook-pipeline** pipeline on the right and select **Delete**. When prompted, select **Delete**.
+Delete this pipeline by selecting **Pipelines** from the left navigation menu, then click the menu (⋮) icon for the **webhook-pipeline** pipeline on the right and select **Delete**. When prompted, select **Delete**.
 
 ## CI/CD
 
