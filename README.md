@@ -230,10 +230,12 @@ You can enable secret scanning for individual repositories. Once enabled on a re
 > [!NOTE]
 > Gitness Secret Scanning scans only new/changed code in commits that users attempt to push **after** you enable Secret Scanning on a repo. Secrets in existing/unchanged code aren't detected.
 
-1. Go to the podinfo repository where you want to enable secret scanning and select **Settings**.
-2. Select the **Security** tab.
-3. Enable **Secret Scanning**.
-4. Select **Save**.
+1. Log out from the developer account. Click the profile icon from the bottom-left corner and then click **Log out**. 
+2. Log in using the admin User ID (`admin`) and Password (`adminpass1`).
+3. Go to the podinfo repository where you want to enable secret scanning and select **Settings**.
+4. Select the **Security** tab.
+5. Enable **Secret Scanning**.
+6. Select **Save**.
 
 Now, from your VS Code, create a new file `config` and add the following:
 
@@ -264,6 +266,10 @@ Pipelines in Gitness help you automate steps in your software delivery process, 
 ### Basic Pipeline
 
 Let’s create a simple pipeline in Gitness that will print the build number and the git commit sha for the current running build using [expression variables](https://docs.gitness.com/reference/pipelines/expression_variables).
+
+Log out from the admin account. Click the profile icon from the bottom-left corner and then click **Log out**. 
+
+Log in using the developer User ID (`developer`) and Password (`devpass1`).
 
 Under **podinfo** repository, select **Pipelines** from the left navigation menu and then **+ New Pipeline**. Give this pipeline a name `build-info-pipeline` and click **Create**.
 
@@ -527,6 +533,12 @@ When code is pushed to a repository, a pull request is opened, or a tag is creat
 
 When creating a pipeline, Gitness automatically creates a default trigger for you. You can customize this trigger, or create additional triggers. The default trigger will have **Pull Request Created**, **Pull Request Reopened** and **Pull Request Updated** conditions.
 
+Let's view the default trigger for our pipeline. Select **Pipelines** from the left navigation menu, select **build-deploy-pipeline**, select **Pipeline Settings**, then select the **Triggers** tab.
+
+### Build + Push + Deploy New Version to Kubernetes Cluster
+
+Now it is time to merge the pull request created earlier.
+
 Go to **Pull Requests** and **Squash and Merge** the open PR (there should only be one).
 
 Select **Pipelines** from the left navigation menu, select **build-deploy-pipeline**, click **Run**, then select **Run Pipeline**. The pipeline will run and deploy a new version of the image.
@@ -539,7 +551,7 @@ kubectl -n gitness port-forward svc/my-project-podinfo 8080:9898
 
 ![podinfo version 6.6.2](assets/podinfo-running-662.png)
 
-### Notify on build or deployment failure
+### Notify on Build or Deployment Failure
 
 Let's introduce a failure by deleting the `gitness` namespace.
 
