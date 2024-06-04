@@ -187,55 +187,39 @@ You can send data to HTTP endpoints from actions in your repository, such as ope
 
 1. Navigate to webhook.site and copy your unique URL.
 
-![Webhook Site Unique URL](assets/webhook-site-url.png)
+   ![Webhook Site Unique URL](assets/webhook-site-url.png)
 
 2. On Gitness, click on **Webhooks** under the podinfo repository and then **+ New Webhook**.
-3. Give this webhook a name: **trigger_on_pr**.
+3. Give this webhook a name: **trigger_on_branch_created**.
 4. Paste the unique URL you copied under **Payload URL**. You can leave out the **Secret**.
-5. Choose **Let me select individual events** and select **PR created**.
+5. Choose **Let me select individual events** and select **Branch created**.
 6. Click **Create Webhook**.
 
-![Webhook PR created](assets/webhook-pr-created.png)
+   ![Webhook branch created](assets/webhook-branch-created.png)
 
-Continue to the next section to create a PR workflow. Once you raise a PR, you’ll see the trigger in action on this site.
+Continue to the next section to push a new branch. Once a new branch is pushed, you’ll see the trigger in action on this site.
 
-### PR Workflow
+### Development Workflow
 
 1. For this section, let’s add **developer** user to the project. 
 2. From the left navigation, click on **Members** and then **+ Add Member**. Find **developer** from the **User** dropdown, choose **Contributor** role, and select **Add member to this project**.
 
-![Add developer to devdays project](assets/add-developer-member.png)
+   ![Add developer to devdays project](assets/add-developer-member.png)
 
 3. On the Gitness portal, log out from this profile by clicking the icon on the bottom-left corner and log back in using the developer credentials. 
 4. Back in VS Code, create a new branch named **update-app-version** and commit a change. For instance, this commit updates the `pkg/version/version.go` file, resulting in the application version changing from **6.6.1** to **6.6.2**.
 
-![Update image tag](assets/update-image-tag.png)
+   ![Update image tag](assets/update-image-tag.png)
 
 5. When you commit and push changes, you’ll be prompted to enter username and password for the remote repository. On the Gitness console, click **Generate Clone Credential** under **Git Clone URL** and use the generated credentials.
 
-![Generate Clone Credentials](assets/generate-clone-creds.png)
+   ![Generate Clone Credentials](assets/generate-clone-creds.png)
 
-Once the push is complete, you should see the remote repository reflect the changes.
+   Once the push is complete, you should see the remote repository reflect the changes, and a response on webhook.site for this event.
 
-6. Click on **Pull Requests** from the left navigation menu and then click **+ New Pull Request**. Select your feature branch as the source branch, add a PR description, and click **Create Pull Request**. 
+6. Navigate to the webhook.site dashboard and you should see the POST request details triggered by your PR. 
 
-![Create PR](assets/create-pr.png)
-
-7. Click **Add +** under Reviewers and find **Administrator** from the list.
-
-8. Navigate to the webhook.site dashboard and you should see the POST request details triggered by your PR. 
-
-![Webhook triggered PR created](assets/webhook-site-pr-created.png)
-
-> [!NOTE]
-> Switch from the **developer** account to the **admin** account before moving to the next step, as the developer account doesn’t have permission to edit the webhook.
-
-9. Toggle the webhook off from the podinfo repository under **Webhooks** → **trigger_on_pr**.
-
-![Disable Webhook](assets/disable-webhook.png)
-
-> [!CAUTION]
-> **Don't merge the PR yet**. You’ll do it later at the CI/CD section. 
+   ![Webhook triggered branch creation](assets/webhook-site-branch-created.png)
 
 ### Secret Scanning
 
@@ -246,10 +230,12 @@ You can enable secret scanning for individual repositories. Once enabled on a re
 > [!NOTE]
 > Gitness Secret Scanning scans only new/changed code in commits that users attempt to push **after** you enable Secret Scanning on a repo. Secrets in existing/unchanged code aren't detected.
 
-1. Go to the podinfo repository where you want to enable secret scanning and select **Settings**.
-2. Select the **Security** tab.
-3. Enable **Secret Scanning**.
-4. Select **Save**.
+1. Log out from the developer account. Click the profile icon from the bottom-left corner and then click **Log out**. 
+2. Log in using the admin User ID (`admin`) and Password (`adminpass1`).
+3. Go to the podinfo repository where you want to enable secret scanning and select **Settings**.
+4. Select the **Security** tab.
+5. Enable **Secret Scanning**.
+6. Select **Save**.
 
 Now, from your VS Code, create a new file `config` and add the following:
 
@@ -281,7 +267,11 @@ Pipelines in Gitness help you automate steps in your software delivery process, 
 
 Let’s create a simple pipeline in Gitness that will print the build number and the git commit sha for the current running build using [expression variables](https://docs.gitness.com/reference/pipelines/expression_variables).
 
-Under **podinfo** repository, select **Pipelines** from the left navigation menu and then **+ New Pipeline**. Give this pipeline a name `hello-pipeline` and click **Create**.
+Log out from the admin account. Click the profile icon from the bottom-left corner and then click **Log out**. 
+
+Log in using the developer User ID (`developer`) and Password (`devpass1`).
+
+Under **podinfo** repository, select **Pipelines** from the left navigation menu and then **+ New Pipeline**. Give this pipeline a name `build-info-pipeline` and click **Create**.
 
 Replace the existing pipeline with the following:
 
@@ -303,7 +293,7 @@ spec:
 
 Click Save and **Run** → **Run Pipeline**. 
 
-You’ll see something like this for the **print-build-info** stage execution:
+You’ll see something like this for the `print-build-info` stage execution:
 
 ```
 latest: Pulling from alpine
@@ -313,6 +303,21 @@ Status: Image is up to date for alpine:latest
 Build number: 1
 Build commit: 5369dca9d8365a2b3540d6581ab52b4744387aef
 ```
+
+Let's trigger this pipeline from a pull request.
+
+1. Click on **Pull Requests** from the left navigation menu and then click **+ New Pull Request**. Select your feature branch as the source branch, add add description. You can view your commit in the **Commits** tab, view your changes in the **Changes** tab.
+
+   Click **Create Pull Request**, which will trigger the pull request pipeline in the **Checks** tab.
+
+   ![Create PR](assets/pull-request.gif)
+
+2. Click **Add +** under Reviewers and find **Administrator** from the list.
+
+> [!CAUTION]
+> **Don't merge the PR yet**. You’ll do it later at the CI/CD section. 
+
+3. Delete this pipeline by selecting **Pipelines** from the left navigation menu, then click the menu (⋮) icon for the **build-info-pipeline** pipeline on the right and select **Delete**. When prompted, select **Delete**.
 
 ### Secrets
 
@@ -356,15 +361,13 @@ spec:
               name: webhook
               inputs:
                 content_type: application/json
-                template: |
-                  {
-                    "name": "BuildBot Notification",
-                    Repo: {{ repo.name }},
-                    Build Number {{ build.number }},
-                    Build Event: {{ build.event }},
-                    Build Status: {{ build.status }},
-                  }
                 urls: ${{ secrets.get("webhook_url") }}
+                template: |-
+                  Name: Gitness Notification
+                  Repo Name: {{ repo.name }}
+                  Build Number {{ build.number }}
+                  Build Event: {{ build.event }}
+                  Build Status: {{ build.status }}
 ```
 
 The test step fails because go is not installed in the alpine docker image by default, which causes the notify step to run. Check the webhook.site dashboard to ensure that a notification is sent.
@@ -398,13 +401,11 @@ spec:
           inputs:
             webhook: ${{ secrets.get("webhook_url") }}
             template: |
-                  {
-                    "name": "BuildBot Notification",
-                    Repo: {{ repo.name }},
-                    Build Number {{ build.number }},
-                    Build Event: {{ build.event }},
-                    Build Status: {{ build.status }},
-                  }
+              Name: Gitness Notification
+              Repo Name: {{ repo.name }}
+              Build Number {{ build.number }}
+              Build Event: {{ build.event }}
+              Build Status: {{ build.status }}
 ```
 
 Now, re-run the pipeline and check your slack workspace and channel to ensure that a notification is sent.
@@ -436,16 +437,16 @@ spec:
               name: webhook
               inputs:
                 content_type: application/json
-                template: |
-                  {
-                    "name": "BuildBot Notification",
-                    Repo: {{ repo.name }},
-                    Build Number {{ build.number }},
-                    Build Event: {{ build.event }},
-                    Build Status: {{ build.status }},
-                  }
                 urls: ${{ secrets.get("webhook_url") }}
+                template: |
+                  Name: Gitness Notification
+                  Repo Name: {{ repo.name }}
+                  Build Number {{ build.number }}
+                  Build Event: {{ build.event }}
+                  Build Status: {{ build.status }}
 ```
+
+Delete this pipeline by selecting **Pipelines** from the left navigation menu, then click the menu (⋮) icon for the **webhook-pipeline** pipeline on the right and select **Delete**. When prompted, select **Delete**.
 
 ## CI/CD
 
@@ -495,14 +496,10 @@ spec:
                 skip_tls_verify: true
                 values: image.repository=k3d-registry.localhost:5000/podinfo,image.tag=${{ build.number }},ui.message=Hello 👋 from build ${{ build.number }}
             when:
-              build.branch == "master"
-              and
-              build.event == "manual"
-              or
-              build.action == "pullreq_merged"
+              build.event == "manual" and build.branch == "master"
 ```
 
-Notice that the deploy step uses the helm3 plugin. The deploy step also uses [conditions](https://docs.gitness.com/pipelines/conditions) to ensure it only runs for manual [events](https://docs.gitness.com/reference/pipelines/expression_variables#buildevent) where the [branch](https://docs.gitness.com/reference/pipelines/expression_variables#buildbranch) is master, or the [action](https://docs.gitness.com/reference/pipelines/expression_variables#buildaction) is a pull request merge.
+Notice that the deploy step uses the helm3 plugin. The deploy step also uses [conditions](https://docs.gitness.com/pipelines/conditions) to ensure it only runs for manual [events](https://docs.gitness.com/reference/pipelines/expression_variables#buildevent) where the [branch](https://docs.gitness.com/reference/pipelines/expression_variables#buildbranch) is master.
 
 When the pipeline completes, query the local Docker API to see the image and tags.
 
@@ -534,13 +531,17 @@ Open http://localhost:8080/ to view the running service.
 
 When code is pushed to a repository, a pull request is opened, or a tag is created, Gitness can automatically [trigger](https://docs.gitness.com/pipelines/triggers) pipeline execution.
 
-When creating a pipeline, Gitness automatically creates a default trigger for you. You can customize this trigger, or create additional triggers.
+When creating a pipeline, Gitness automatically creates a default trigger for you. You can customize this trigger, or create additional triggers. The default trigger will have **Pull Request Created**, **Pull Request Reopened** and **Pull Request Updated** conditions.
 
-Modify the default trigger (**build-deploy-pipeline** → **Pipeline Settings** → **Triggers** → **default**) for your pipeline by enabling the **Pull Request Merged** setting, then save the change.
+Let's view the default trigger for our pipeline. Select **Pipelines** from the left navigation menu, select **build-deploy-pipeline**, select **Pipeline Settings**, then select the **Triggers** tab.
 
-![PR merged trigger](assets/pr-merged-trigger.png)
+### Build + Push + Deploy New Version to Kubernetes Cluster
 
-Go to **Pull Requests** and **Squash and Merge** the open PR (there should only be one). This will trigger the pipeline, and a new image with the updated image will be deployed.
+Now it is time to merge the pull request created earlier.
+
+Go to **Pull Requests** and **Squash and Merge** the open PR (there should only be one).
+
+Select **Pipelines** from the left navigation menu, select **build-deploy-pipeline**, click **Run**, then select **Run Pipeline**. The pipeline will run and deploy a new version of the image.
 
 Execute the port-forwarding command again to see the running podinfo app with the new version.
 
@@ -550,9 +551,15 @@ kubectl -n gitness port-forward svc/my-project-podinfo 8080:9898
 
 ![podinfo version 6.6.2](assets/podinfo-running-662.png)
 
-### Notify on build or deployment failure
+### Notify on Build or Deployment Failure
 
-Let’s update the **build-deploy-pipeline** to include a notification step which gets executed when a previous step fails. From **Pipelines** --> **build-deploy-pipeline**, click **Edit** and replace the existing pipeline YAML as follows. Click **Save** instead of **Save and Run**.
+Let's introduce a failure by deleting the `gitness` namespace.
+
+```shell
+kubectl delete namespace gitness
+```
+
+Let’s update the **build-deploy-pipeline** to include a notification step which gets executed when a previous step fails. From **Pipelines** --> **build-deploy-pipeline**, click **Edit** and replace the existing pipeline YAML as follows. Click **Save**, click **Run**, then click **Run Pipeline**.
 
 ```YAML
 kind: pipeline
@@ -577,6 +584,7 @@ spec:
                 repo: k3d-registry.localhost:5000/podinfo
                 registry: k3d-registry.localhost:5000
                 tags: ${{ build.number }}
+         
           - name: deploy
             type: plugin
             spec:
@@ -593,11 +601,7 @@ spec:
                 skip_tls_verify: true
                 values: image.repository=k3d-registry.localhost:5000/podinfo,image.tag=${{ build.number }},ui.message=Hello 👋 from build ${{ build.number }}
             when:
-              build.branch == "master"
-              and
-              build.event == "manual"
-              or
-              build.action == "pullreq_merged"
+              build.event == "manual" and build.branch == "master"
 
           - name: notify
             type: plugin
@@ -606,24 +610,16 @@ spec:
               name: webhook
               inputs:
                 content_type: application/json
-                template: |
-                  {
-                    "name": "BuildBot Notification",
-                    Repo: {{ repo.name }},
-                    Build Number {{ build.number }},
-                    Build Event: {{ build.event }},
-                    Build Status: {{ build.status }},
-                  }
                 urls: ${{ secrets.get("webhook_url") }}
+                template: |
+                  Name: Gitness Notification
+                  Repo Name: {{ repo.name }}
+                  Build Number {{ build.number }}
+                  Build Event: {{ build.event }}
+                  Build Status: {{ build.status }} 
 ```                
 
-Now, let's introduce a failure by deleting the `gitness` namespace.
-
-```shell
-kubectl delete namespace gitness
-```
-
-Click **Run** for the **build-deploy-pipeline** and you'll observe a failure for the **deploy** step. This will make the **notify** step execute and you'll see the following notification on webhook.site.
+Observe a failure for the **deploy** step. This will make the **notify** step execute and you'll see the following notification on webhook.site.
 
 ![Final webhook-site notification](assets/final-webhook-site-notification.png)
 
