@@ -20,6 +20,7 @@ spec:
                 repo: k3d-registry.localhost:5000/podinfo
                 registry: k3d-registry.localhost:5000
                 tags: ${{ build.number }}
+         
           - name: deploy
             type: plugin
             spec:
@@ -36,11 +37,7 @@ spec:
                 skip_tls_verify: true
                 values: image.repository=k3d-registry.localhost:5000/podinfo,image.tag=${{ build.number }},ui.message=Hello 👋 from build ${{ build.number }}
             when:
-              build.branch == "master"
-              and
-              build.event == "manual"
-              or
-              build.action == "pullreq_merged"
+              build.event == "manual" and build.branch == "master"
 
           - name: notify
             type: plugin
@@ -49,12 +46,10 @@ spec:
               name: webhook
               inputs:
                 content_type: application/json
-                template: |
-                  {
-                    "name": "BuildBot Notification",
-                    Repo: {{ repo.name }},
-                    Build Number {{ build.number }},
-                    Build Event: {{ build.event }},
-                    Build Status: {{ build.status }},
-                  }
                 urls: ${{ secrets.get("webhook_url") }}
+                template: |
+                  Name: Gitness Notification
+                  Repo Name: {{ repo.name }}
+                  Build Number {{ build.number }}
+                  Build Event: {{ build.event }}
+                  Build Status: {{ build.status }}

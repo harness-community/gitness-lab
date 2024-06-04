@@ -308,9 +308,6 @@ Let's trigger this pipeline from a pull request.
 
 2. Click **Add +** under Reviewers and find **Administrator** from the list.
 
-> [!CAUTION]
-> **Don't merge the PR yet**. You’ll do it later at the CI/CD section. 
-
 3. Delete this pipeline by selecting **Pipelines** from the left navigation menu, then click the menu (⋮) icon for the **build-info-pipeline** pipeline on the right and select **Delete**. When prompted, select **Delete**.
 
 ### Secrets
@@ -490,14 +487,10 @@ spec:
                 skip_tls_verify: true
                 values: image.repository=k3d-registry.localhost:5000/podinfo,image.tag=${{ build.number }},ui.message=Hello 👋 from build ${{ build.number }}
             when:
-              build.branch == "master"
-              and
-              build.event == "manual"
-              or
-              build.action == "pullreq_merged"
+              build.event == "manual" and build.branch == "master"
 ```
 
-Notice that the deploy step uses the helm3 plugin. The deploy step also uses [conditions](https://docs.gitness.com/pipelines/conditions) to ensure it only runs for manual [events](https://docs.gitness.com/reference/pipelines/expression_variables#buildevent) where the [branch](https://docs.gitness.com/reference/pipelines/expression_variables#buildbranch) is master, or the [action](https://docs.gitness.com/reference/pipelines/expression_variables#buildaction) is a pull request merge.
+Notice that the deploy step uses the helm3 plugin. The deploy step also uses [conditions](https://docs.gitness.com/pipelines/conditions) to ensure it only runs for manual [events](https://docs.gitness.com/reference/pipelines/expression_variables#buildevent) where the [branch](https://docs.gitness.com/reference/pipelines/expression_variables#buildbranch) is master.
 
 When the pipeline completes, query the local Docker API to see the image and tags.
 
@@ -543,7 +536,13 @@ kubectl -n gitness port-forward svc/my-project-podinfo 8080:9898
 
 ### Notify on build or deployment failure
 
-Let’s update the **build-deploy-pipeline** to include a notification step which gets executed when a previous step fails. From **Pipelines** --> **build-deploy-pipeline**, click **Edit** and replace the existing pipeline YAML as follows. Click **Save** instead of **Save and Run**.
+Let's introduce a failure by deleting the `gitness` namespace.
+
+```shell
+kubectl delete namespace gitness
+```
+
+Let’s update the **build-deploy-pipeline** to include a notification step which gets executed when a previous step fails. From **Pipelines** --> **build-deploy-pipeline**, click **Edit** and replace the existing pipeline YAML as follows. Click **Save**, click **Run**, then click **Run Pipeline**.
 
 ```YAML
 kind: pipeline
@@ -568,6 +567,7 @@ spec:
                 repo: k3d-registry.localhost:5000/podinfo
                 registry: k3d-registry.localhost:5000
                 tags: ${{ build.number }}
+         
           - name: deploy
             type: plugin
             spec:
@@ -584,11 +584,7 @@ spec:
                 skip_tls_verify: true
                 values: image.repository=k3d-registry.localhost:5000/podinfo,image.tag=${{ build.number }},ui.message=Hello 👋 from build ${{ build.number }}
             when:
-              build.branch == "master"
-              and
-              build.event == "manual"
-              or
-              build.action == "pullreq_merged"
+              build.event == "manual" and build.branch == "master"
 
           - name: notify
             type: plugin
@@ -597,24 +593,16 @@ spec:
               name: webhook
               inputs:
                 content_type: application/json
-                template: |
-                  {
-                    "name": "BuildBot Notification",
-                    Repo: {{ repo.name }},
-                    Build Number {{ build.number }},
-                    Build Event: {{ build.event }},
-                    Build Status: {{ build.status }},
-                  }
                 urls: ${{ secrets.get("webhook_url") }}
+                template: |
+                  Name: Gitness Notification
+                  Repo Name: {{ repo.name }}
+                  Build Number {{ build.number }}
+                  Build Event: {{ build.event }}
+                  Build Status: {{ build.status }} 
 ```                
 
-Now, let's introduce a failure by deleting the `gitness` namespace.
-
-```shell
-kubectl delete namespace gitness
-```
-
-Click **Run** for the **build-deploy-pipeline** and you'll observe a failure for the **deploy** step. This will make the **notify** step execute and you'll see the following notification on webhook.site.
+Observe a failure for the **deploy** step. This will make the **notify** step execute and you'll see the following notification on webhook.site.
 
 ![Final webhook-site notification](assets/final-webhook-site-notification.png)
 
