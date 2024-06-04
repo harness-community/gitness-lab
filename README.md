@@ -527,7 +527,9 @@ When code is pushed to a repository, a pull request is opened, or a tag is creat
 
 When creating a pipeline, Gitness automatically creates a default trigger for you. You can customize this trigger, or create additional triggers. The default trigger will have **Pull Request Created**, **Pull Request Reopened** and **Pull Request Updated** conditions.
 
-Go to **Pull Requests** and **Squash and Merge** the open PR (there should only be one). This will trigger the pipeline, and a new image with the updated image will be deployed.
+Go to **Pull Requests** and **Squash and Merge** the open PR (there should only be one).
+
+Select **Pipelines** from the left navigation menu, select **build-deploy-pipeline**, click **Run**, then select **Run Pipeline**. The pipeline will run and deploy a new version of the image.
 
 Execute the port-forwarding command again to see the running podinfo app with the new version.
 
