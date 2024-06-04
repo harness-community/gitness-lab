@@ -190,16 +190,16 @@ You can send data to HTTP endpoints from actions in your repository, such as ope
 ![Webhook Site Unique URL](assets/webhook-site-url.png)
 
 2. On Gitness, click on **Webhooks** under the podinfo repository and then **+ New Webhook**.
-3. Give this webhook a name: **trigger_on_pr**.
+3. Give this webhook a name: **trigger_on_branch_created**.
 4. Paste the unique URL you copied under **Payload URL**. You can leave out the **Secret**.
-5. Choose **Let me select individual events** and select **PR created**.
+5. Choose **Let me select individual events** and select **Branch created**.
 6. Click **Create Webhook**.
 
-![Webhook PR created](assets/webhook-pr-created.png)
+![Webhook branch created](assets/webhook-branch-created.png)
 
 Continue to the next section to create a PR workflow. Once you raise a PR, you’ll see the trigger in action on this site.
 
-### PR Workflow
+### Development Workflow
 
 1. For this section, let’s add **developer** user to the project. 
 2. From the left navigation, click on **Members** and then **+ Add Member**. Find **developer** from the **User** dropdown, choose **Contributor** role, and select **Add member to this project**.
@@ -215,27 +215,11 @@ Continue to the next section to create a PR workflow. Once you raise a PR, you�
 
 ![Generate Clone Credentials](assets/generate-clone-creds.png)
 
-Once the push is complete, you should see the remote repository reflect the changes.
+Once the push is complete, you should see the remote repository reflect the changes, and a response on webhook.site for this event.
 
-6. Click on **Pull Requests** from the left navigation menu and then click **+ New Pull Request**. Select your feature branch as the source branch, add a PR description, and click **Create Pull Request**. 
+6. Navigate to the webhook.site dashboard and you should see the POST request details triggered by your PR. 
 
-![Create PR](assets/create-pr.png)
-
-7. Click **Add +** under Reviewers and find **Administrator** from the list.
-
-8. Navigate to the webhook.site dashboard and you should see the POST request details triggered by your PR. 
-
-![Webhook triggered PR created](assets/webhook-site-pr-created.png)
-
-> [!NOTE]
-> Switch from the **developer** account to the **admin** account before moving to the next step, as the developer account doesn’t have permission to edit the webhook.
-
-9. Toggle the webhook off from the podinfo repository under **Webhooks** → **trigger_on_pr**.
-
-![Disable Webhook](assets/disable-webhook.png)
-
-> [!CAUTION]
-> **Don't merge the PR yet**. You’ll do it later at the CI/CD section. 
+![Webhook triggered branch creation](assets/webhook-site-branch-created.png)
 
 ### Secret Scanning
 
@@ -534,11 +518,7 @@ Open http://localhost:8080/ to view the running service.
 
 When code is pushed to a repository, a pull request is opened, or a tag is created, Gitness can automatically [trigger](https://docs.gitness.com/pipelines/triggers) pipeline execution.
 
-When creating a pipeline, Gitness automatically creates a default trigger for you. You can customize this trigger, or create additional triggers.
-
-Modify the default trigger (**build-deploy-pipeline** → **Pipeline Settings** → **Triggers** → **default**) for your pipeline by enabling the **Pull Request Merged** setting, then save the change.
-
-![PR merged trigger](assets/pr-merged-trigger.png)
+When creating a pipeline, Gitness automatically creates a default trigger for you. You can customize this trigger, or create additional triggers. The default trigger will have **Pull Request Created**, **Pull Request Reopened** and **Pull Request Updated** conditions.
 
 Go to **Pull Requests** and **Squash and Merge** the open PR (there should only be one). This will trigger the pipeline, and a new image with the updated image will be deployed.
 
@@ -654,3 +634,14 @@ Delete the Gitness Docker network.
 ```shell
 docker network rm gitness
 ```
+
+
+
+TODO
+
+
+6. Click on **Pull Requests** from the left navigation menu and then click **+ New Pull Request**. Select your feature branch as the source branch, add a PR description, and click **Create Pull Request**. 
+
+![Create PR](assets/create-pr.png)
+
+7. Click **Add +** under Reviewers and find **Administrator** from the list.
