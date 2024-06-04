@@ -187,7 +187,7 @@ You can send data to HTTP endpoints from actions in your repository, such as ope
 
 1. Navigate to webhook.site and copy your unique URL.
 
-![Webhook Site Unique URL](assets/webhook-site-url.png)
+   ![Webhook Site Unique URL](assets/webhook-site-url.png)
 
 2. On Gitness, click on **Webhooks** under the podinfo repository and then **+ New Webhook**.
 3. Give this webhook a name: **trigger_on_branch_created**.
@@ -195,31 +195,31 @@ You can send data to HTTP endpoints from actions in your repository, such as ope
 5. Choose **Let me select individual events** and select **Branch created**.
 6. Click **Create Webhook**.
 
-![Webhook branch created](assets/webhook-branch-created.png)
+   ![Webhook branch created](assets/webhook-branch-created.png)
 
-Continue to the next section to create a PR workflow. Once you raise a PR, you’ll see the trigger in action on this site.
+Continue to the next section to push a new branch. Once a new branch is pushed, you’ll see the trigger in action on this site.
 
 ### Development Workflow
 
 1. For this section, let’s add **developer** user to the project. 
 2. From the left navigation, click on **Members** and then **+ Add Member**. Find **developer** from the **User** dropdown, choose **Contributor** role, and select **Add member to this project**.
 
-![Add developer to devdays project](assets/add-developer-member.png)
+   ![Add developer to devdays project](assets/add-developer-member.png)
 
 3. On the Gitness portal, log out from this profile by clicking the icon on the bottom-left corner and log back in using the developer credentials. 
 4. Back in VS Code, create a new branch named **update-app-version** and commit a change. For instance, this commit updates the `pkg/version/version.go` file, resulting in the application version changing from **6.6.1** to **6.6.2**.
 
-![Update image tag](assets/update-image-tag.png)
+   ![Update image tag](assets/update-image-tag.png)
 
 5. When you commit and push changes, you’ll be prompted to enter username and password for the remote repository. On the Gitness console, click **Generate Clone Credential** under **Git Clone URL** and use the generated credentials.
 
-![Generate Clone Credentials](assets/generate-clone-creds.png)
+   ![Generate Clone Credentials](assets/generate-clone-creds.png)
 
-Once the push is complete, you should see the remote repository reflect the changes, and a response on webhook.site for this event.
+   Once the push is complete, you should see the remote repository reflect the changes, and a response on webhook.site for this event.
 
 6. Navigate to the webhook.site dashboard and you should see the POST request details triggered by your PR. 
 
-![Webhook triggered branch creation](assets/webhook-site-branch-created.png)
+   ![Webhook triggered branch creation](assets/webhook-site-branch-created.png)
 
 ### Secret Scanning
 
@@ -298,6 +298,8 @@ Build number: 1
 Build commit: 5369dca9d8365a2b3540d6581ab52b4744387aef
 ```
 
+Select **Pipelines** from the left navigation menu, then click the menu (⋮) icon for the **hello-pipeline** pipeline on the right and select **Delete**. When prompted, select **Delete**.
+
 ### Secrets
 
 Gitness offers a built-in secret manager to store and manage sensitive information, such as passwords, tokens, and ssh keys. In Gitness, secrets are managed at the project level. 
@@ -340,15 +342,13 @@ spec:
               name: webhook
               inputs:
                 content_type: application/json
-                template: |
-                  {
-                    "name": "BuildBot Notification",
-                    Repo: {{ repo.name }},
-                    Build Number {{ build.number }},
-                    Build Event: {{ build.event }},
-                    Build Status: {{ build.status }},
-                  }
                 urls: ${{ secrets.get("webhook_url") }}
+                template: |-
+                  Name: Gitness Notification
+                  Repo Name: {{ repo.name }}
+                  Build Number {{ build.number }}
+                  Build Event: {{ build.event }}
+                  Build Status: {{ build.status }}
 ```
 
 The test step fails because go is not installed in the alpine docker image by default, which causes the notify step to run. Check the webhook.site dashboard to ensure that a notification is sent.
@@ -382,13 +382,11 @@ spec:
           inputs:
             webhook: ${{ secrets.get("webhook_url") }}
             template: |
-                  {
-                    "name": "BuildBot Notification",
-                    Repo: {{ repo.name }},
-                    Build Number {{ build.number }},
-                    Build Event: {{ build.event }},
-                    Build Status: {{ build.status }},
-                  }
+              Name: Gitness Notification
+              Repo Name: {{ repo.name }}
+              Build Number {{ build.number }}
+              Build Event: {{ build.event }}
+              Build Status: {{ build.status }}
 ```
 
 Now, re-run the pipeline and check your slack workspace and channel to ensure that a notification is sent.
@@ -420,16 +418,16 @@ spec:
               name: webhook
               inputs:
                 content_type: application/json
-                template: |
-                  {
-                    "name": "BuildBot Notification",
-                    Repo: {{ repo.name }},
-                    Build Number {{ build.number }},
-                    Build Event: {{ build.event }},
-                    Build Status: {{ build.status }},
-                  }
                 urls: ${{ secrets.get("webhook_url") }}
+                template: |
+                  Name: Gitness Notification
+                  Repo Name: {{ repo.name }}
+                  Build Number {{ build.number }}
+                  Build Event: {{ build.event }}
+                  Build Status: {{ build.status }}
 ```
+
+Select **Pipelines** from the left navigation menu, then click the menu (⋮) icon for the **webhook-pipeline** pipeline on the right and select **Delete**. When prompted, select **Delete**.
 
 ## CI/CD
 
@@ -634,14 +632,3 @@ Delete the Gitness Docker network.
 ```shell
 docker network rm gitness
 ```
-
-
-
-TODO
-
-
-6. Click on **Pull Requests** from the left navigation menu and then click **+ New Pull Request**. Select your feature branch as the source branch, add a PR description, and click **Create Pull Request**. 
-
-![Create PR](assets/create-pr.png)
-
-7. Click **Add +** under Reviewers and find **Administrator** from the list.
