@@ -308,8 +308,8 @@ Let's trigger this pipeline from a pull request.
 
 2. Click **Add +** under Reviewers and find **Administrator** from the list.
 
-   > [!CAUTION]
-   > **Don't merge the PR yet**. You’ll do it later at the CI/CD section. 
+> [!CAUTION]
+> **Don't merge the PR yet**. You’ll do it later at the CI/CD section. 
 
 3. Delete this pipeline by selecting **Pipelines** from the left navigation menu, then click the menu (⋮) icon for the **build-info-pipeline** pipeline on the right and select **Delete**. When prompted, select **Delete**.
 
