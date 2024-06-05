@@ -1,7 +1,7 @@
 ---
 title: Gitness Workshop
 authors: Dewan Ahmed & Jim Sheldon
-version: 1.2
+version: 1.3
 ---
 
 # Gitness Workshop
@@ -267,13 +267,9 @@ Pipelines in Gitness help you automate steps in your software delivery process, 
 
 Let’s create a simple pipeline in Gitness that will print the build number and the git commit sha for the current running build using [expression variables](https://docs.gitness.com/reference/pipelines/expression_variables).
 
-Log out from the admin account. Click the profile icon from the bottom-left corner and then click **Log out**. 
-
-Log in using the developer User ID (`developer`) and Password (`devpass1`).
-
 Under **podinfo** repository, select **Pipelines** from the left navigation menu and then **+ New Pipeline**. Give this pipeline a name `build-info-pipeline` and click **Create**.
 
-Replace the existing pipeline with the following:
+Since the [pipeline definition already exists in the podinfo repository](https://github.com/harness-community/podinfo/blob/master/.harness/build-info-pipeline.yaml), you should see the following pipeline in your editor.
 
 ```YAML
 kind: pipeline
@@ -291,6 +287,9 @@ spec:
             echo "Build commit: ${{ build.commit }}"
 ```
 
+> [!NOTE]
+> If you see a different pipeline definition, please verify that you have entered the pipeline name correctly.
+
 Click Save and **Run** → **Run Pipeline**. 
 
 You’ll see something like this for the `print-build-info` stage execution:
@@ -304,7 +303,9 @@ Build number: 1
 Build commit: 5369dca9d8365a2b3540d6581ab52b4744387aef
 ```
 
-Let's trigger this pipeline from a pull request.
+Let's trigger this pipeline from a pull request. Log out from the admin account. Click the profile icon from the bottom-left corner and then click **Log out**. 
+
+Log in using the developer User ID (`developer`) and Password (`devpass1`).
 
 1. Click on **Pull Requests** from the left navigation menu and then click **+ New Pull Request**. Select your feature branch as the source branch, add add description. You can view your commit in the **Commits** tab, view your changes in the **Changes** tab.
 
