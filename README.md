@@ -318,6 +318,8 @@ Log in using the developer User ID (`developer`) and Password (`devpass1`).
 > [!CAUTION]
 > **Don't merge the PR yet**. You’ll do it later at the CI/CD section. 
 
+The developer account doesn't have enough privilege to delete a pipeline. Log out from the developer account and log in using the admin User ID (`admin`) and Password (`adminpass1`).
+
 3. Delete this pipeline by selecting **Pipelines** from the left navigation menu, then click the menu (⋮) icon for the **build-info-pipeline** pipeline on the right and select **Delete**. When prompted, select **Delete**.
 
 ### Secrets
